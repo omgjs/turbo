@@ -24,10 +24,6 @@
 		"extends": "@omgjs/babel-config-react"
 	},
 	"dependencies": {
-		"@omgjs/eslint-config-react": "x",
-		"@omgjs/babel-config-react": "x",
-		"@omgjs/prettier-config-react": "x",
-		"@omgjs/webpack-config-react": "x",
 		"@babel/core": "7.1.0",
 		"@babel/plugin-proposal-class-properties": "7.1.0",
 		"@babel/plugin-proposal-decorators": "7.1.0",
@@ -44,6 +40,10 @@
 		"@babel/preset-react": "7.0.0",
 		"@babel/register": "7.0.0",
 		"@babel/runtime": "7.0.0",
+		"@omgjs/babel-config-react": "^1.0.4",
+		"@omgjs/eslint-config-react": "^1.0.2",
+		"@omgjs/prettier-config-react": "^1.0.2",
+		"@omgjs/webpack-config-react": "^1.0.3",
 		"babel-core": "7.0.0-beta.3",
 		"babel-eslint": "10.0.0",
 		"babel-jest": "23.6.0",
