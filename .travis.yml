@@ -1,0 +1,13 @@
+language: node_js
+node_js: 8
+deploy:
+  email: artkor@live.ru
+  provider: script
+  skip_cleanup: true
+  api_key:
+    secure: $NPM_TOKEN
+  script:
+    - npx semantic-release
+branches:
+  only:
+    - master
