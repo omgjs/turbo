@@ -9,14 +9,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/omgjs/babel-config-react.git"
+		"url": "git+https://github.com/omgjs/turbo.git"
 	},
 	"author": "Artem Korolev",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/omgjs/babel-config-react/issues"
+		"url": "https://github.com/omgjs/turbo/issues"
 	},
-	"homepage": "https://github.com/omgjs/babel-config-react#readme",
+	"homepage": "https://github.com/omgjs/turbo#readme",
 	"eslintConfig": {
 		"extends": "@omgjs/eslint-config-react"
 	},
