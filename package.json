@@ -1,70 +1,44 @@
 {
 	"name": "@omgjs/turbo",
 	"private": false,
-	"publishConfig": {
-		"access": "public"
-	},
-	"main": "dist/api/turbo-api.js",
-	"module": "dist/api/turbo-api.es.js",
-	"jsnext:main": "dist/api/turbo-api.es.js",
-	"scripts": {
-		"build": "rollup -c",
-		"start": "rollup -c -w",
-		"test": "echo \"Warning: this package comes without tests\" && exit 0",
-		"prepare": "npm run build",
-		"predeploy": "cd example && npm install && npm run build",
-		"deploy": "gh-pages -d example/build"
+	"homepage": "https://github.com/omgjs/turbo#readme",
+	"bugs": {
+		"url": "https://github.com/omgjs/turbo/issues"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/omgjs/turbo.git"
 	},
-	"author": "Artem Korolev",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/omgjs/turbo/issues"
+	"author": "Artem Korolev",
+	"main": "dist/api/turbo-api.js",
+	"module": "dist/api/turbo-api.es.js",
+	"jsnext:main": "dist/api/turbo-api.es.js",
+	"bin": {
+		"turbo": "src/cli/turbo-cli.js"
 	},
-	"homepage": "https://github.com/omgjs/turbo#readme",
+	"scripts": {
+		"build": "rollup -c",
+		"predeploy": "cd example && npm install && npm run build",
+		"deploy": "gh-pages -d example/build",
+		"prepare": "npm run build",
+		"start": "rollup -c -w",
+		"test": "echo \"Warning: this package comes without tests\" && exit 0"
+	},
+	"babel": {
+		"extends": "@omgjs/babel-config-react"
+	},
 	"eslintConfig": {
 		"extends": "@omgjs/eslint-config-react",
 		"rules": {
 			"no-underscore-dangle": "off"
 		}
 	},
-	"babel": {
-		"extends": "@omgjs/babel-config-react"
-	},
-	"peerDependencies": {
-		"prop-types": "^15.6.2",
-		"react": ">=16.5.2",
-		"react-dom": ">=16.5.2"
-	},
 	"devDependencies": {
-		"babel-loader": "^8.0.4",
-		"css-loader": "^1.0.0",
-		"gh-pages": "^1.2.0",
-		"html-webpack-plugin": "^3.2.0",
-		"react": "^16.5.2",
-		"react-dom": "^16.5.2",
-		"react-scripts": "^1.1.4",
-		"rollup": "^0.66.6",
-		"rollup-plugin-babel": "^4.0.3",
-		"rollup-plugin-commonjs": "^9.2.0",
-		"rollup-plugin-eslint-bundle": "^5.0.1",
-		"rollup-plugin-node-resolve": "^3.4.0",
-		"rollup-plugin-peer-deps-external": "^2.2.0",
-		"rollup-plugin-postcss": "^1.6.2",
-		"rollup-plugin-url": "^2.0.1",
-		"style-loader": "^0.23.1",
-		"webpack": "^4.21.0",
-		"webpack-cli": "^3.1.2",
-		"webpack-dev-server": "^3.1.9"
-	},
-	"dependencies": {
-		"@babel/core": "^7.1.2",
 		"@babel/cli": "^7.1.2",
-		"@babel/plugin-proposal-class-properties": "^7.1.0",
+		"@babel/core": "^7.1.2",
 		"@babel/plugin-external-helpers": "^7.0.0",
+		"@babel/plugin-proposal-class-properties": "^7.1.0",
 		"@babel/plugin-proposal-decorators": "^7.1.2",
 		"@babel/plugin-proposal-export-namespace-from": "^7.0.0",
 		"@babel/plugin-proposal-function-sent": "^7.1.0",
@@ -85,11 +59,13 @@
 		"@omgjs/webpack-config-react": "^1.0.4",
 		"babel-eslint": "10.0.0",
 		"babel-jest": "23.6.0",
+		"babel-loader": "^8.0.4",
 		"babel-plugin-lodash": "3.3.4",
 		"browserslist": "4.1.1",
 		"clean-webpack-plugin": "0.1.19",
 		"connect-history-api-fallback": "1.5.0",
 		"cross-env": "5.2.0",
+		"css-loader": "^1.0.0",
 		"enzyme": "3.6.0",
 		"enzyme-adapter-react-16": "1.5.0",
 		"eslint": "5.7.0",
@@ -104,6 +80,8 @@
 		"eslint-plugin-react": "7.11.1",
 		"eslint-watch": "4.0.2",
 		"file-loader": "2.0.0",
+		"gh-pages": "^1.2.0",
+		"html-webpack-plugin": "^3.2.0",
 		"husky": "1.0.1",
 		"identity-obj-proxy": "3.0.0",
 		"jest": "23.6.0",
@@ -117,10 +95,30 @@
 		"node-sass": "4.9.3",
 		"prettier": "1.14.3",
 		"pretty-quick": "1.7.0",
+		"react": "^16.5.2",
+		"react-dom": "^16.5.2",
+		"react-scripts": "^1.1.4",
+		"rollup": "^0.66.6",
+		"rollup-plugin-babel": "^4.0.3",
+		"rollup-plugin-commonjs": "^9.2.0",
+		"rollup-plugin-eslint-bundle": "^5.0.1",
+		"rollup-plugin-node-resolve": "^3.4.0",
+		"rollup-plugin-peer-deps-external": "^2.2.0",
+		"rollup-plugin-postcss": "^1.6.2",
+		"rollup-plugin-url": "^2.0.1",
 		"sass-loader": "7.1.0",
+		"style-loader": "^0.23.1",
+		"webpack": "^4.21.0",
+		"webpack-cli": "^3.1.2",
+		"webpack-dev-server": "^3.1.9",
 		"webpack-merge": "4.1.4"
 	},
-	"bin": {
-		"turbo": "src/cli/turbo-cli.js"
+	"peerDependencies": {
+		"prop-types": "^15.6.2",
+		"react": ">=16.5.2",
+		"react-dom": ">=16.5.2"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
