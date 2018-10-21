@@ -34,7 +34,7 @@
 			"no-underscore-dangle": "off"
 		}
 	},
-	"devDependencies": {
+	"dependencies": {
 		"@babel/cli": "^7.1.2",
 		"@babel/core": "^7.1.2",
 		"@babel/plugin-external-helpers": "^7.0.0",
