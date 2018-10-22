@@ -8,8 +8,10 @@ function build() {
 		if (err || stats.hasErrors()) {
 			console.debug(err, stats.toString()); // eslint-disable-line no-console
 			// Handle errors here
+			console.log("Production build failed."); // eslint-disable-line no-console
+		} else {
+			console.log("Production build success."); // eslint-disable-line no-console
 		}
-		console.log("Production build success."); // eslint-disable-line no-console
 	});
 }
 
