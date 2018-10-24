@@ -22,7 +22,7 @@ export default {
 			sourcemap: true,
 		},
 	],
-	external: ["react", "react-dom", "prop-types"],
+	external: ["react", "react-dom", "prop-types", "react-redux", "redux"],
 	plugins: [
 		external(),
 		postcss({

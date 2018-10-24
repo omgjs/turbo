@@ -32,7 +32,8 @@
 	"eslintConfig": {
 		"extends": "@omgjs/eslint-config-react",
 		"rules": {
-			"no-underscore-dangle": "off"
+			"no-underscore-dangle": "off",
+			"prefer-rest-params": "off"
 		}
 	},
 	"devDependencies": {
@@ -101,7 +102,10 @@
 		"pretty-quick": "1.8.0",
 		"react": "^16.5.2",
 		"react-dom": "^16.5.2",
+		"react-redux": "^5.0.7",
+		"react-router-dom": "^4.3.1",
 		"react-scripts": "^2.0.5",
+		"redux": "^4.0.1",
 		"rollup": "^0.66.6",
 		"rollup-plugin-babel": "^4.0.3",
 		"rollup-plugin-commonjs": "^9.2.0",
@@ -120,7 +124,10 @@
 	"peerDependencies": {
 		"prop-types": "^15.6.2",
 		"react": ">=16.5.2",
-		"react-dom": ">=16.5.2"
+		"react-dom": ">=16.5.2",
+		"react-redux": "^5.0.7",
+		"react-router-dom": "^4.3.1",
+		"redux": "^4.0.1"
 	},
 	"publishConfig": {
 		"access": "public"
