@@ -19,6 +19,19 @@ function addRoute(path, routes) {
 	return <Route exact key={path} path={path} component={connectedComponent} />;
 }
 
+function getEnhancers() {
+	// TODO Try to remove when `react-router-redux` is out of beta, LOCATION_CHANGE should not be fired more than once after hot reloading
+	// Prevent recomputing reducers for `replaceReducer`
+	/* eslint-disable no-underscore-dangle */
+	const composeEnhancers =
+		process.env.NODE_ENV !== "production" &&
+		typeof window === "object" &&
+		window.__REDUX_DEVTOOLS_EXTENSION__ &&
+		window.__REDUX_DEVTOOLS_EXTENSION__({ shouldHotReload: false });
+	/* eslint-enable */
+	return composeEnhancers;
+}
+
 export function initApplication(routes) {
 	const initialState = {
 		todos: ["lalala"],
@@ -30,7 +43,8 @@ export function initApplication(routes) {
 		return state;
 	}
 
-	const store = createStore(todoApp);
+	/* eslint-disable no-underscore-dangle */
+	const store = createStore(todoApp, getEnhancers());
 
 	ReactDOM.render(
 		<Provider store={store}>

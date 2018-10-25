@@ -14,6 +14,7 @@
 	"main": "dist/api/turbo-api.js",
 	"module": "dist/api/turbo-api.es.js",
 	"jsnext:main": "dist/api/turbo-api.es.js",
+	"unpkg": "dist/api/turbo-api.umd.min.js",
 	"bin": {
 		"turbo": "src/cli/turbo-cli.js"
 	},
@@ -30,14 +31,14 @@
 		"extends": "@omgjs/babel-config-react"
 	},
 	"eslintConfig": {
-		"extends": "@omgjs/eslint-config-react",
-		"rules": {
-			"no-underscore-dangle": "off",
-			"prefer-rest-params": "off"
-		}
+		"extends": "@omgjs/eslint-config-react"
 	},
 	"devDependencies": {
-		"npm-upgrade": "^1.4.1"
+		"microbundle": "^0.6.0",
+		"npm-upgrade": "^1.4.1",
+		"rollup-plugin-eslint": "^5.0.0",
+		"rollup-plugin-license": "^0.7.0",
+		"rollup-plugin-uglify": "^6.0.0"
 	},
 	"dependencies": {
 		"@babel/cli": "^7.1.2",
@@ -131,5 +132,6 @@
 	},
 	"publishConfig": {
 		"access": "public"
-	}
+	},
+	"source": "src/api/turbo-api.jsx"
 }
