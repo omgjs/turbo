@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
 import { createStore } from "redux";
 import { connect, Provider } from "react-redux";
 
@@ -28,6 +28,16 @@ function createSimpleRoute(routes, path) {
 	);
 }
 
+function wrapComponentsInParams(templateParams) {
+	Object.keys(templateParams).forEach(key => {
+		if (typeof templateParams[key] === "function") {
+			const Component = templateParams[key];
+			templateParams[key] = connectToRedux(withRouter(Component)); // eslint-disable-line no-param-reassign
+		}
+	});
+	return templateParams;
+}
+
 function composeComplexComponent(route, path) {
 	const Template = route.template;
 	const typeOfTemplate = typeof Template;
@@ -38,7 +48,9 @@ function composeComplexComponent(route, path) {
 		);
 	}
 	if (Template) {
-		return () => <Template {...route.templateParams} />;
+		return props => (
+			<Template {...props} {...wrapComponentsInParams(route.templateParams)} />
+		);
 	}
 	return <div>Complex component type is not supported</div>;
 }
@@ -108,7 +120,7 @@ export function initApplication(routes) {
 	);
 }
 
-export function componentWithPropTypes(component, proptypes) {
-	component.propTypes = proptypes; // eslint-disable-line no-param-reassign
+export function componentWithPropTypes(component, propTypes) {
+	component.propTypes = propTypes; // eslint-disable-line no-param-reassign
 	return component;
 }
