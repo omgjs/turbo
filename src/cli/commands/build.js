@@ -6,10 +6,27 @@ function build() {
 
 	webpack(webpackConfig, (err, stats) => {
 		if (err || stats.hasErrors()) {
-			console.debug(err, stats.toString()); // eslint-disable-line no-console
+			if (err) {
+				console.error(err.stack || err); // eslint-disable-line no-console
+				if (err.details) {
+					console.error(err.details); // eslint-disable-line no-console
+				}
+				return;
+			}
+
+			const info = stats.toJson();
+
+			if (stats.hasErrors()) {
+				console.error(info.errors); // eslint-disable-line no-console
+			}
+
 			// Handle errors here
 			console.log("Production build failed."); // eslint-disable-line no-console
 		} else {
+			if (stats.hasWarnings()) {
+				const info = stats.toJson();
+				console.warn(info.warnings); // eslint-disable-line no-console
+			}
 			console.log("Production build success."); // eslint-disable-line no-console
 		}
 	});
