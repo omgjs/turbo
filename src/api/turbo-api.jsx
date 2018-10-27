@@ -32,7 +32,7 @@ function wrapComponentsInParams(templateParams) {
 	Object.keys(templateParams).forEach(key => {
 		if (typeof templateParams[key] === "function") {
 			const Component = templateParams[key];
-			templateParams[key] = connectToRedux(withRouter(Component)); // eslint-disable-line no-param-reassign
+			templateParams[key] = withRouter(connectToRedux(Component)); // eslint-disable-line no-param-reassign
 		}
 	});
 	return templateParams;
