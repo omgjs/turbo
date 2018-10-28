@@ -93,8 +93,8 @@ function connectToDataSource(Component, data, dataSources) {
 		const dataKey = "data";
 		return {
 			component: plainTextReFetchConnector(() => ({ data }))(props => (
-				<Context.Provider value={{ [dataKey]: data }}>
-					<Component {...props} />
+				<Context.Provider value={{ [dataKey]: props.data }}>
+					<Component {...props} data={{ data: props.data }} />
 				</Context.Provider>
 			)),
 			dataSources: [...dataSources, { context: Context, dataKey }],
