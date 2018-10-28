@@ -3,6 +3,60 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
 import { createStore } from "redux";
 import { connect, Provider } from "react-redux";
+import { connect as reFetchConnect } from "react-refetch";
+
+/* const csvRefetchConnector = reFetchConnect.defaults({
+	handleResponse(response) {
+		if (
+			response.headers.get("content-length") === "0" ||
+			response.status === 204
+		) {
+			return;
+		}
+
+		const csv = response.text();
+
+		if (response.status >= 200 && response.status < 300) {
+			return csv.then(
+				text =>
+					new Promise((resolve, reject) => {
+						parse(text, (err, data) => {
+							if (err) {
+								reject(err);
+							}
+							resolve(data);
+						});
+					}),
+			);
+		}
+		return csv.then(cause => Promise.reject(new Error(cause)));
+	},
+}); */
+
+const plainTextReFetchConnector = reFetchConnect.defaults({
+	handleResponse(response) {
+		if (
+			response.headers.get("content-length") === "0" ||
+			response.status === 204
+		) {
+			return new Promise(resolve => {
+				resolve("");
+			});
+		}
+
+		const plainText = response.text();
+
+		if (response.status >= 200 && response.status < 300) {
+			return plainText.then(
+				text =>
+					new Promise(resolve => {
+						resolve(text);
+					}),
+			);
+		}
+		return plainText.then(cause => Promise.reject(new Error(cause)));
+	},
+});
 
 function connectToRedux(component) {
 	const mapStateToProps = state => ({
@@ -28,17 +82,65 @@ function createSimpleRoute(routes, path) {
 	);
 }
 
-function wrapComponentsInParams(templateParams) {
+function connectToDataSource(Component, data, dataSources) {
+	if (!data)
+		return {
+			component: Component,
+			dataSources,
+		};
+	if (typeof data === "string") {
+		const Context = React.createContext();
+		const dataKey = "data";
+		return {
+			component: plainTextReFetchConnector(() => ({ data }))(props => (
+				<Context.Provider value={{ [dataKey]: data }}>
+					<Component {...props} />
+				</Context.Provider>
+			)),
+			dataSources: [...dataSources, { context: Context, dataKey }],
+		};
+	}
+	throw new Error(`Type of data parameter (${typeof data}) is not supported`);
+}
+
+function withContext(Component, Context, dataKey) {
+	return function ConnectedComponent(props) {
+		return (
+			<Context.Consumer>
+				{data => <Component {...props} {...{ [dataKey]: data }} />}
+			</Context.Consumer>
+		);
+	};
+}
+
+function connectDataSourcesToChildComponent(component, dataSources) {
+	let connectedComponent = component;
+	dataSources.forEach(dataSource => {
+		connectedComponent = withContext(
+			connectedComponent,
+			dataSource.context,
+			dataSource.dataKey,
+		);
+	});
+	return connectedComponent;
+}
+
+function wrapComponentsInParams(templateParams, dataSources) {
 	Object.keys(templateParams).forEach(key => {
 		if (typeof templateParams[key] === "function") {
-			const Component = templateParams[key];
-			templateParams[key] = withRouter(connectToRedux(Component)); // eslint-disable-line no-param-reassign
+			const Component = connectDataSourcesToChildComponent(
+				templateParams[key],
+				dataSources,
+			);
+			/* eslint-disable no-param-reassign */
+			templateParams[key] = withRouter(connectToRedux(Component));
+			/* eslint-enable */
 		}
 	});
 	return templateParams;
 }
 
-function composeComplexComponent(route, path) {
+function composeComplexComponent(route, path, dataSources) {
 	const Template = route.template;
 	const typeOfTemplate = typeof Template;
 	if (Template && typeOfTemplate !== "function") {
@@ -48,16 +150,27 @@ function composeComplexComponent(route, path) {
 		);
 	}
 	if (Template) {
+		const DataConnectedTemplate = connectToDataSource(
+			Template,
+			route.data,
+			dataSources,
+		);
 		return props => (
-			<Template {...props} {...wrapComponentsInParams(route.templateParams)} />
+			<DataConnectedTemplate.component
+				{...props}
+				{...wrapComponentsInParams(
+					route.templateParams,
+					DataConnectedTemplate.dataSources,
+				)}
+			/> // eslint-disable-line
 		);
 	}
 	return <div>Complex component type is not supported</div>;
 }
 
-function createComplexRoute(routes, path) {
+function createComplexRoute(routes, path, dataSources) {
 	const route = routes[path];
-	const component = composeComplexComponent(route, path);
+	const component = composeComplexComponent(route, path, dataSources || []);
 	return (
 		<Route exact key={path} path={path} component={connectToRedux(component)} /> // eslint-disable-line react/jsx-closing-bracket-location
 	);
