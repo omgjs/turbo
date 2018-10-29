@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
-import { createStore } from "redux";
+import { createStore, compose } from "redux";
 import { connect, Provider } from "react-redux";
 import { connect as reFetchConnect } from "react-reFetch";
 
@@ -140,18 +140,18 @@ function connectDataSourcesToChildComponent(component, dataSources) {
 }
 
 function wrapComponentsInParams(templateParams, dataSources) {
-	Object.keys(templateParams).forEach(key => {
-		if (typeof templateParams[key] === "function") {
-			const Component = connectDataSourcesToChildComponent(
-				templateParams[key],
-				dataSources,
-			);
-			/* eslint-disable no-param-reassign */
-			templateParams[key] = withRouter(connectToRedux(Component));
-			/* eslint-enable */
+	const paramsWithWrappedComponents = { ...templateParams };
+	Object.keys(paramsWithWrappedComponents).forEach(key => {
+		if (typeof paramsWithWrappedComponents[key] === "function") {
+			paramsWithWrappedComponents[key] = compose(
+				connectToRedux,
+				withRouter,
+				connectDataSourcesToChildComponent,
+			)(templateParams[key], dataSources);
+			// templateParams[key] = withRouter(connectToRedux(Component));
 		}
 	});
-	return templateParams;
+	return paramsWithWrappedComponents;
 }
 
 function composeComplexComponent(route, path, dataSources) {
