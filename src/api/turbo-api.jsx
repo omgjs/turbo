@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
 import { createStore, compose } from "redux";
 import { connect, Provider } from "react-redux";
-import { connect as reFetchConnect } from "react-reFetch";
+import { connect as reFetchConnect } from "react-refetch";
 
 /* const csvRefetchConnector = reFetchConnect.defaults({
 	handleResponse(response) {
