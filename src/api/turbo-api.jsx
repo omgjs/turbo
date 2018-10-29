@@ -269,7 +269,7 @@ export function componentWithPropTypes(component, PropTypes) {
 	return component;
 }
 
-function DataComponent({ Loading, Rejected, Fulfilled }) {
+function DataComponent({ Loading, Rejected, Fulfilled, Unknown }) {
 	return props => {
 		const {
 			data: { data },
@@ -283,7 +283,7 @@ function DataComponent({ Loading, Rejected, Fulfilled }) {
 		if (data.fulfilled) {
 			return <Fulfilled {...props} />;
 		}
-		return <h1>UNKNOWN STATE</h1>;
+		return <Unknown />;
 	};
 }
 
@@ -291,6 +291,7 @@ export function dataComponentWithPropTypes({
 	Loading,
 	Rejected,
 	Fulfilled,
+	Unknown,
 	PropTypes,
 }) {
 	/* eslint-disable no-console */
@@ -298,6 +299,7 @@ export function dataComponentWithPropTypes({
 		Loading,
 		Rejected,
 		Fulfilled,
+		Unknown,
 		PropTypes,
 	});
 	/* eslint-enable */
@@ -306,6 +308,7 @@ export function dataComponentWithPropTypes({
 			Loading,
 			Rejected,
 			Fulfilled,
+			Unknown,
 		}),
 		PropTypes,
 	);
