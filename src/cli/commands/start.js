@@ -6,7 +6,7 @@ const defaultDevServerOptions = {
 };
 const defaultServerOptions = {
 	port: 3000,
-	host: "localhost",
+	host: "0.0.0.0",
 };
 
 function start(userDevServerOptions) {
