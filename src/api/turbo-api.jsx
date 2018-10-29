@@ -97,6 +97,14 @@ function getReFetchFunction(data) {
 	return reFetchConnect;
 }
 
+function constructReFetchDataRequestFunction(props, data) {
+	const result = {};
+	Object.keys(data).forEach(key => {
+		result[key] = data[key](props);
+	});
+	return result;
+}
+
 function connectToDataSource(Component, data, dataSources) {
 	console.debug("connectToDataSource", { Component, data, dataSources }); // eslint-disable-line no-console
 	if (!data)
@@ -111,10 +119,34 @@ function connectToDataSource(Component, data, dataSources) {
 		return {
 			component: reFetchFunction(() => ({ data }))(props => (
 				<Context.Provider value={{ [dataKey]: props.data }}>
-					<Component {...props} data={{ data: props.data }} />
+					<Component {...props} />
 				</Context.Provider>
 			)),
-			dataSources: [...dataSources, { context: Context, dataKey }],
+			dataSources: [...dataSources, { context: Context, dataKey: [dataKey] }],
+		};
+	}
+	if (typeof data === "object") {
+		const Context = React.createContext();
+		const reFetchFunction = getReFetchFunction(data);
+		return {
+			component: reFetchFunction(props =>
+				constructReFetchDataRequestFunction(props, data),
+			)(props => {
+				// TODO: maybe next requires a bit of optimization
+				const contextProperties = {};
+				Object.keys(data).forEach(key => {
+					contextProperties[key] = props[key];
+				});
+				return (
+					<Context.Provider value={contextProperties}>
+						<Component {...props} />
+					</Context.Provider>
+				);
+			}),
+			dataSources: [
+				...dataSources,
+				{ context: Context, dataKey: Object.keys(data) },
+			],
 		};
 	}
 	throw new Error(`Type of data parameter (${typeof data}) is not supported`);
@@ -125,7 +157,13 @@ function withContext(Component, Context, dataKey) {
 	return function ConnectedComponent(props) {
 		return (
 			<Context.Consumer>
-				{data => <Component {...props} {...{ [dataKey]: data }} />}
+				{data => {
+					const contextProps = {};
+					dataKey.forEach(key => {
+						contextProps[key] = data[key];
+					});
+					return <Component {...props} {...contextProps} />;
+				}}
 			</Context.Consumer>
 		);
 	};
@@ -269,11 +307,10 @@ export function componentWithPropTypes(component, PropTypes) {
 	return component;
 }
 
-function DataComponent({ Loading, Rejected, Fulfilled, Unknown }) {
+function DataComponent({ Loading, Rejected, Fulfilled, Unknown, dataKey }) {
+	const key = dataKey || "data";
 	return props => {
-		const {
-			data: { data },
-		} = props;
+		const data = props[key]; // eslint-disable-line react/destructuring-assignment
 		if (data.pending) {
 			return <Loading />;
 		}
@@ -293,6 +330,7 @@ export function dataComponentWithPropTypes({
 	Fulfilled,
 	Unknown,
 	PropTypes,
+	dataKey,
 }) {
 	/* eslint-disable no-console */
 	console.debug("dataComponentWithPropTypes", {
@@ -309,6 +347,7 @@ export function dataComponentWithPropTypes({
 			Rejected,
 			Fulfilled,
 			Unknown,
+			dataKey,
 		}),
 		PropTypes,
 	);
