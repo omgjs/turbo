@@ -263,8 +263,50 @@ export function initApplication(routes) {
 	);
 }
 
-export function componentWithPropTypes(component, propTypes) {
-	console.debug("componentWithPropTypes", { component, propTypes }); // eslint-disable-line no-console
-	component.propTypes = propTypes; // eslint-disable-line no-param-reassign
+export function componentWithPropTypes(component, PropTypes) {
+	console.debug("componentWithPropTypes", { component, PropTypes }); // eslint-disable-line no-console
+	component.propTypes = PropTypes; // eslint-disable-line no-param-reassign
 	return component;
+}
+
+function DataComponent({ Loading, Rejected, Fulfilled }) {
+	return props => {
+		const {
+			data: { data },
+		} = props;
+		if (data.pending) {
+			return <Loading />;
+		}
+		if (data.rejected) {
+			return <Rejected />;
+		}
+		if (data.fulfilled) {
+			return <Fulfilled {...props} />;
+		}
+		return <h1>UNKNOWN STATE</h1>;
+	};
+}
+
+export function dataComponentWithPropTypes({
+	Loading,
+	Rejected,
+	Fulfilled,
+	PropTypes,
+}) {
+	/* eslint-disable no-console */
+	console.debug("dataComponentWithPropTypes", {
+		Loading,
+		Rejected,
+		Fulfilled,
+		PropTypes,
+	});
+	/* eslint-enable */
+	return componentWithPropTypes(
+		DataComponent({
+			Loading,
+			Rejected,
+			Fulfilled,
+		}),
+		PropTypes,
+	);
 }
