@@ -92,6 +92,11 @@ function getReFetchFunction(data) {
 		if (data.endsWith("!json")) {
 			return reFetchConnect;
 		}
+		/**
+		 * TODO: add more reFetchers formats. Add also fetcher with type "any",
+		 * so it guesses format of response trying to convert it all of
+		 * known formats (or some of them)
+		 */
 		return reFetchConnect;
 	}
 	return reFetchConnect;
