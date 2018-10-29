@@ -59,6 +59,7 @@ const plainTextReFetchConnector = reFetchConnect.defaults({
 });
 
 function connectToRedux(component) {
+	console.debug("connectToRedux", component); // eslint-disable-line no-console
 	const mapStateToProps = state => ({
 		todos: state.todos,
 	});
@@ -72,6 +73,7 @@ function connectToRedux(component) {
 }
 
 function createSimpleRoute(routes, path) {
+	console.debug("createSimpleRoute", routes, path); // eslint-disable-line no-console
 	return (
 		<Route
 			exact
@@ -96,6 +98,7 @@ function getReFetchFunction(data) {
 }
 
 function connectToDataSource(Component, data, dataSources) {
+	console.debug("connectToDataSource", Component, data, dataSources); // eslint-disable-line no-console
 	if (!data)
 		return {
 			component: Component,
@@ -118,6 +121,7 @@ function connectToDataSource(Component, data, dataSources) {
 }
 
 function withContext(Component, Context, dataKey) {
+	console.debug("withContext", Component, Context, dataKey); // eslint-disable-line no-console
 	return function ConnectedComponent(props) {
 		return (
 			<Context.Consumer>
@@ -128,6 +132,7 @@ function withContext(Component, Context, dataKey) {
 }
 
 function connectDataSourcesToChildComponent(component, dataSources) {
+	console.debug("connectDataSourcesToChildComponent", component, dataSources); // eslint-disable-line no-console
 	let connectedComponent = component;
 	dataSources.forEach(dataSource => {
 		connectedComponent = withContext(
@@ -140,6 +145,7 @@ function connectDataSourcesToChildComponent(component, dataSources) {
 }
 
 function wrapComponentsInParams(templateParams, dataSources) {
+	console.debug("wrapComponentsInParams", templateParams, dataSources); // eslint-disable-line no-console
 	const paramsWithWrappedComponents = { ...templateParams };
 	Object.keys(paramsWithWrappedComponents).forEach(key => {
 		if (typeof paramsWithWrappedComponents[key] === "function") {
@@ -155,6 +161,7 @@ function wrapComponentsInParams(templateParams, dataSources) {
 }
 
 function composeComplexComponent(route, path, dataSources) {
+	console.debug("composeComplexComponent", route, path, dataSources); // eslint-disable-line no-console
 	const Template = route.template;
 	const typeOfTemplate = typeof Template;
 	if (Template && typeOfTemplate !== "function") {
@@ -169,13 +176,14 @@ function composeComplexComponent(route, path, dataSources) {
 			route.data,
 			dataSources,
 		);
+		const paramsWithWrappedComponents = wrapComponentsInParams(
+			route.templateParams,
+			DataConnectedTemplate.dataSources,
+		);
 		return props => (
 			<DataConnectedTemplate.component
 				{...props}
-				{...wrapComponentsInParams(
-					route.templateParams,
-					DataConnectedTemplate.dataSources,
-				)}
+				{...paramsWithWrappedComponents}
 			/> // eslint-disable-line
 		);
 	}
@@ -183,6 +191,7 @@ function composeComplexComponent(route, path, dataSources) {
 }
 
 function createComplexRoute(routes, path, dataSources) {
+	console.debug("createComplexRoute", routes, path, dataSources); // eslint-disable-line no-console
 	const route = routes[path];
 	const component = composeComplexComponent(route, path, dataSources || []);
 	return (
@@ -191,6 +200,7 @@ function createComplexRoute(routes, path, dataSources) {
 }
 
 function addRoute(path, routes) {
+	console.debug("addRoute", path, routes); // eslint-disable-line no-console
 	const routeType = typeof routes[path];
 	if (routeType === "function") {
 		return createSimpleRoute(routes, path);
@@ -209,6 +219,7 @@ function addRoute(path, routes) {
 }
 
 function getEnhancers() {
+	console.debug("getEnhancers"); // eslint-disable-line no-console
 	// TODO Try to remove when `react-router-redux` is out of beta, LOCATION_CHANGE should not be fired more than once after hot reloading
 	// Prevent recomputing reducers for `replaceReducer`
 	/* eslint-disable no-underscore-dangle */
@@ -222,6 +233,7 @@ function getEnhancers() {
 }
 
 export function initApplication(routes) {
+	console.debug("initApplication", routes); // eslint-disable-line no-console
 	const initialState = {
 		todos: ["lalala"],
 	};
@@ -248,6 +260,7 @@ export function initApplication(routes) {
 }
 
 export function componentWithPropTypes(component, propTypes) {
+	console.debug("componentWithPropTypes", component, propTypes); // eslint-disable-line no-console
 	component.propTypes = propTypes; // eslint-disable-line no-param-reassign
 	return component;
 }
