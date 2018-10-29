@@ -7,8 +7,7 @@ deploy:
   api_key:
     secure: $NPM_TOKEN
   script:
-    - npm run build
-    - npx semantic-release
+    - npm run build && npx semantic-release
 branches:
   only:
     - master
