@@ -59,7 +59,7 @@ const plainTextReFetchConnector = reFetchConnect.defaults({
 });
 
 function connectToRedux(component) {
-	console.debug("connectToRedux", component); // eslint-disable-line no-console
+	console.debug("connectToRedux", { component }); // eslint-disable-line no-console
 	const mapStateToProps = state => ({
 		todos: state.todos,
 	});
@@ -72,15 +72,10 @@ function connectToRedux(component) {
 	)(component);
 }
 
-function createSimpleRoute(routes, path) {
-	console.debug("createSimpleRoute", routes, path); // eslint-disable-line no-console
+function createSimpleRoute(path, component) {
+	console.debug("createSimpleRoute", { path, component }); // eslint-disable-line no-console
 	return (
-		<Route
-			exact
-			key={path}
-			path={path}
-			component={connectToRedux(routes[path])}
-		/> // eslint-disable-line react/jsx-closing-bracket-location
+		<Route exact key={path} path={path} component={connectToRedux(component)} />
 	);
 }
 
@@ -103,7 +98,7 @@ function getReFetchFunction(data) {
 }
 
 function connectToDataSource(Component, data, dataSources) {
-	console.debug("connectToDataSource", Component, data, dataSources); // eslint-disable-line no-console
+	console.debug("connectToDataSource", { Component, data, dataSources }); // eslint-disable-line no-console
 	if (!data)
 		return {
 			component: Component,
@@ -126,7 +121,7 @@ function connectToDataSource(Component, data, dataSources) {
 }
 
 function withContext(Component, Context, dataKey) {
-	console.debug("withContext", Component, Context, dataKey); // eslint-disable-line no-console
+	console.debug("withContext", { Component, Context, dataKey }); // eslint-disable-line no-console
 	return function ConnectedComponent(props) {
 		return (
 			<Context.Consumer>
@@ -137,7 +132,12 @@ function withContext(Component, Context, dataKey) {
 }
 
 function connectDataSourcesToChildComponent(component, dataSources) {
-	console.debug("connectDataSourcesToChildComponent", component, dataSources); // eslint-disable-line no-console
+	/* eslint-disable no-console */
+	console.debug("connectDataSourcesToChildComponent", {
+		component,
+		dataSources,
+	});
+	/* eslint-enable */
 	let connectedComponent = component;
 	dataSources.forEach(dataSource => {
 		connectedComponent = withContext(
@@ -150,7 +150,7 @@ function connectDataSourcesToChildComponent(component, dataSources) {
 }
 
 function wrapComponentsInParams(templateParams, dataSources) {
-	console.debug("wrapComponentsInParams", templateParams, dataSources); // eslint-disable-line no-console
+	console.debug("wrapComponentsInParams", { templateParams, dataSources }); // eslint-disable-line no-console
 	const paramsWithWrappedComponents = { ...templateParams };
 	Object.keys(paramsWithWrappedComponents).forEach(key => {
 		if (typeof paramsWithWrappedComponents[key] === "function") {
@@ -165,8 +165,8 @@ function wrapComponentsInParams(templateParams, dataSources) {
 	return paramsWithWrappedComponents;
 }
 
-function composeComplexComponent(route, path, dataSources) {
-	console.debug("composeComplexComponent", route, path, dataSources); // eslint-disable-line no-console
+function composeComplexComponent(path, route, dataSources) {
+	console.debug("composeComplexComponent", { path, route, dataSources }); // eslint-disable-line no-console
 	const Template = route.template;
 	const typeOfTemplate = typeof Template;
 	if (Template && typeOfTemplate !== "function") {
@@ -195,23 +195,22 @@ function composeComplexComponent(route, path, dataSources) {
 	return <div>Complex component type is not supported</div>;
 }
 
-function createComplexRoute(routes, path, dataSources) {
-	console.debug("createComplexRoute", routes, path, dataSources); // eslint-disable-line no-console
-	const route = routes[path];
-	const component = composeComplexComponent(route, path, dataSources || []);
+function createComplexRoute(path, route, dataSources) {
+	console.debug("createComplexRoute", { path, route, dataSources }); // eslint-disable-line no-console
+	const component = composeComplexComponent(path, route, dataSources || []);
 	return (
 		<Route exact key={path} path={path} component={connectToRedux(component)} /> // eslint-disable-line react/jsx-closing-bracket-location
 	);
 }
 
-function addRoute(path, routes) {
-	console.debug("addRoute", path, routes); // eslint-disable-line no-console
-	const routeType = typeof routes[path];
+function addRoute(path, route) {
+	console.debug("addRoute", { path, route }); // eslint-disable-line no-console
+	const routeType = typeof route;
 	if (routeType === "function") {
-		return createSimpleRoute(routes, path);
+		return createSimpleRoute(path, route);
 	}
 	if (routeType === "object") {
-		return createComplexRoute(routes, path);
+		return createComplexRoute(path, route);
 	}
 	return (
 		<Route
@@ -238,7 +237,7 @@ function getEnhancers() {
 }
 
 export function initApplication(routes) {
-	console.debug("initApplication", routes); // eslint-disable-line no-console
+	console.debug("initApplication", { routes }); // eslint-disable-line no-console
 	const initialState = {
 		todos: ["lalala"],
 	};
@@ -256,7 +255,7 @@ export function initApplication(routes) {
 		<Provider store={store}>
 			<BrowserRouter>
 				<Switch>
-					{Object.keys(routes).map(path => addRoute(path, routes))}
+					{Object.keys(routes).map(path => addRoute(path, routes[path]))}
 				</Switch>
 			</BrowserRouter>
 		</Provider>,
@@ -265,7 +264,7 @@ export function initApplication(routes) {
 }
 
 export function componentWithPropTypes(component, propTypes) {
-	console.debug("componentWithPropTypes", component, propTypes); // eslint-disable-line no-console
+	console.debug("componentWithPropTypes", { component, propTypes }); // eslint-disable-line no-console
 	component.propTypes = propTypes; // eslint-disable-line no-param-reassign
 	return component;
 }
