@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
 import { createStore } from "redux";
 import { connect, Provider } from "react-redux";
-import { connect as reFetchConnect } from "react-refetch";
+import { connect as reFetchConnect } from "react-reFetch";
 
 /* const csvRefetchConnector = reFetchConnect.defaults({
 	handleResponse(response) {
@@ -82,6 +82,19 @@ function createSimpleRoute(routes, path) {
 	);
 }
 
+function getReFetchFunction(data) {
+	if (typeof data === "string") {
+		if (data.endsWith("!raw")) {
+			return plainTextReFetchConnector;
+		}
+		if (data.endsWith("!json")) {
+			return reFetchConnect;
+		}
+		return reFetchConnect;
+	}
+	return reFetchConnect;
+}
+
 function connectToDataSource(Component, data, dataSources) {
 	if (!data)
 		return {
@@ -91,8 +104,9 @@ function connectToDataSource(Component, data, dataSources) {
 	if (typeof data === "string") {
 		const Context = React.createContext();
 		const dataKey = "data";
+		const reFetchFunction = getReFetchFunction(data);
 		return {
-			component: plainTextReFetchConnector(() => ({ data }))(props => (
+			component: reFetchFunction(() => ({ data }))(props => (
 				<Context.Provider value={{ [dataKey]: props.data }}>
 					<Component {...props} data={{ data: props.data }} />
 				</Context.Provider>
