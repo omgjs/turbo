@@ -7,6 +7,7 @@ const defaultDevServerOptions = {
 	compress: true,
 	historyApiFallback: true,
 	hot: true,
+	hotOnly: true,
 	open: true,
 	stats: defaultStatsOptions,
 };
