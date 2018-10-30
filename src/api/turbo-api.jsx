@@ -1,6 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Switch, Route, withRouter } from "react-router-dom";
+import {
+	BrowserRouter,
+	HashRouter,
+	Switch,
+	Route,
+	withRouter,
+} from "react-router-dom";
 import { createStore, compose } from "redux";
 import { connect, Provider } from "react-redux";
 import { connect as reFetchConnect } from "react-refetch";
@@ -274,7 +280,7 @@ function getEnhancers() {
 	return composeEnhancers;
 }
 
-export function initApplication(routes) {
+export function initApplication(routes, hash) {
 	console.debug("initApplication", { routes }); // eslint-disable-line no-console
 	const initialState = {
 		todos: ["lalala"],
@@ -289,13 +295,18 @@ export function initApplication(routes) {
 	/* eslint-disable no-underscore-dangle */
 	const store = createStore(todoApp, getEnhancers());
 
+	let Router = BrowserRouter;
+	if (hash) {
+		Router = HashRouter;
+	}
+
 	ReactDOM.render(
 		<Provider store={store}>
-			<BrowserRouter>
+			<Router>
 				<Switch>
 					{Object.keys(routes).map(path => addRoute(path, routes[path]))}
 				</Switch>
-			</BrowserRouter>
+			</Router>
 		</Provider>,
 		document.getElementById("app"),
 	);
