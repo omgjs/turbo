@@ -312,15 +312,15 @@ function DataComponent({ Loading, Rejected, Fulfilled, Unknown, dataKey }) {
 	return props => {
 		const data = props[key]; // eslint-disable-line react/destructuring-assignment
 		if (data.pending) {
-			return <Loading />;
+			return <Loading {...props} />;
 		}
 		if (data.rejected) {
-			return <Rejected />;
+			return <Rejected {...props} />;
 		}
 		if (data.fulfilled) {
 			return <Fulfilled {...props} />;
 		}
-		return <Unknown />;
+		return <Unknown {...props} />;
 	};
 }
 
