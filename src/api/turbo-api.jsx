@@ -11,6 +11,58 @@ import { createStore, compose } from "redux";
 import { connect, Provider } from "react-redux";
 import { connect as reFetchConnect } from "react-refetch";
 
+const reFetchCache = new Map();
+
+function fakedCachedJsonResponseObject(cache) {
+	return {
+		turboCached: cache.data,
+	};
+}
+
+function cachingFetch(input, init) {
+	const req = new Request(input, init);
+	const now = new Date().getTime();
+	const inAMinute = 300000 + now;
+	const cached = reFetchCache.get(req.url);
+
+	if (cached && cached.time < inAMinute) {
+		return new Promise(resolve =>
+			resolve(fakedCachedJsonResponseObject(cached)),
+		);
+	}
+
+	return fetch(req);
+}
+
+const jsonReFetchCachedConnector = reFetchConnect.defaults({
+	handleResponse(response) {
+		if (response.turboCached) return Promise.resolve(response.turboCached);
+		if (
+			response.headers.get("content-length") === "0" ||
+			response.status === 204
+		) {
+			return Promise.reject(new Error("Content zero"));
+		}
+
+		const json = response.json();
+
+		if (response.status >= 200 && response.status < 300) {
+			return json
+				.then(jsonParsed => {
+					const now = new Date().getTime();
+					reFetchCache.set(response.url, {
+						data: jsonParsed,
+						time: now,
+					});
+					return Promise.resolve(jsonParsed);
+				})
+				.catch(cause => Promise.reject(new Error(cause)));
+		}
+		return Promise.reject(new Error("Unknown response status"));
+	},
+	fetch: cachingFetch,
+});
+
 /* const csvRefetchConnector = reFetchConnect.defaults({
 	handleResponse(response) {
 		if (
@@ -91,16 +143,16 @@ function getReFetchFunction(data) {
 			return plainTextReFetchConnector;
 		}
 		if (data.endsWith("!json")) {
-			return reFetchConnect;
+			return jsonReFetchCachedConnector;
 		}
 		/**
 		 * TODO: add more reFetchers formats. Add also fetcher with type "any",
 		 * so it guesses format of response trying to convert it all of
 		 * known formats (or some of them)
 		 */
-		return reFetchConnect;
+		return jsonReFetchCachedConnector;
 	}
-	return reFetchConnect;
+	return jsonReFetchCachedConnector;
 }
 
 function constructReFetchDataRequestFunction(props, data) {
@@ -323,15 +375,15 @@ function DataComponent({ Loading, Rejected, Fulfilled, Unknown, dataKey }) {
 	return props => {
 		const data = props[key]; // eslint-disable-line react/destructuring-assignment
 		if (data.pending) {
-			return <Loading {...props} />;
+			return Loading(props);
 		}
 		if (data.rejected) {
-			return <Rejected {...props} />;
+			return Rejected(props);
 		}
 		if (data.fulfilled) {
-			return <Fulfilled {...props} />;
+			return Fulfilled(props);
 		}
-		return <Unknown {...props} />;
+		return Unknown(props);
 	};
 }
 
